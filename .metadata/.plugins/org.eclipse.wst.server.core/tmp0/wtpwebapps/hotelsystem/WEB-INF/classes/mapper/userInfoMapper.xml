@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.luck.dao.userInfoMapper">
+  <resultMap id="BaseResultMap" type="com.hotel.luck.bean.userInfo">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="bathday" jdbcType="DATE" property="bathday" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="true_name" jdbcType="VARCHAR" property="trueName" />
+    <result column="ID_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="card_uRL" jdbcType="VARCHAR" property="cardUrl" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="register_time" jdbcType="TIMESTAMP" property="registerTime" />
+    <result column="is_validate" jdbcType="INTEGER" property="isValidate" />
+    <result column="like_list" jdbcType="VARCHAR" property="likeList" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    user_id, user_name, password, bathday, telephone, true_name, ID_card, card_uRL, sex, 
+    age, register_time, is_validate, like_list
+  </sql>
+  <select id="selectByExample" parameterType="com.hotel.luck.bean.userInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from userInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from userInfo
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from userInfo
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hotel.luck.bean.userInfoExample">
+    delete from userInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hotel.luck.bean.userInfo">
+    insert into userInfo (user_id, user_name, password, 
+      bathday, telephone, true_name, 
+      ID_card, card_uRL, sex, 
+      age, register_time, is_validate, 
+      like_list)
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{bathday,jdbcType=DATE}, #{telephone,jdbcType=VARCHAR}, #{trueName,jdbcType=VARCHAR}, 
+      #{idCard,jdbcType=VARCHAR}, #{cardUrl,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{age,jdbcType=INTEGER}, #{registerTime,jdbcType=TIMESTAMP}, #{isValidate,jdbcType=INTEGER}, 
+      #{likeList,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hotel.luck.bean.userInfo">
+    insert into userInfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="bathday != null">
+        bathday,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="trueName != null">
+        true_name,
+      </if>
+      <if test="idCard != null">
+        ID_card,
+      </if>
+      <if test="cardUrl != null">
+        card_uRL,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="registerTime != null">
+        register_time,
+      </if>
+      <if test="isValidate != null">
+        is_validate,
+      </if>
+      <if test="likeList != null">
+        like_list,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="bathday != null">
+        #{bathday,jdbcType=DATE},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="trueName != null">
+        #{trueName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null">
+        #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="cardUrl != null">
+        #{cardUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="registerTime != null">
+        #{registerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValidate != null">
+        #{isValidate,jdbcType=INTEGER},
+      </if>
+      <if test="likeList != null">
+        #{likeList,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hotel.luck.bean.userInfoExample" resultType="java.lang.Long">
+    select count(*) from userInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update userInfo
+    <set>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userName != null">
+        user_name = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null">
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bathday != null">
+        bathday = #{record.bathday,jdbcType=DATE},
+      </if>
+      <if test="record.telephone != null">
+        telephone = #{record.telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trueName != null">
+        true_name = #{record.trueName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idCard != null">
+        ID_card = #{record.idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cardUrl != null">
+        card_uRL = #{record.cardUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sex != null">
+        sex = #{record.sex,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null">
+        age = #{record.age,jdbcType=INTEGER},
+      </if>
+      <if test="record.registerTime != null">
+        register_time = #{record.registerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isValidate != null">
+        is_validate = #{record.isValidate,jdbcType=INTEGER},
+      </if>
+      <if test="record.likeList != null">
+        like_list = #{record.likeList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update userInfo
+    set user_id = #{record.userId,jdbcType=INTEGER},
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      bathday = #{record.bathday,jdbcType=DATE},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      true_name = #{record.trueName,jdbcType=VARCHAR},
+      ID_card = #{record.idCard,jdbcType=VARCHAR},
+      card_uRL = #{record.cardUrl,jdbcType=VARCHAR},
+      sex = #{record.sex,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=INTEGER},
+      register_time = #{record.registerTime,jdbcType=TIMESTAMP},
+      is_validate = #{record.isValidate,jdbcType=INTEGER},
+      like_list = #{record.likeList,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hotel.luck.bean.userInfo">
+    update userInfo
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="bathday != null">
+        bathday = #{bathday,jdbcType=DATE},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="trueName != null">
+        true_name = #{trueName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null">
+        ID_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="cardUrl != null">
+        card_uRL = #{cardUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="registerTime != null">
+        register_time = #{registerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isValidate != null">
+        is_validate = #{isValidate,jdbcType=INTEGER},
+      </if>
+      <if test="likeList != null">
+        like_list = #{likeList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hotel.luck.bean.userInfo">
+    update userInfo
+    set user_name = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      bathday = #{bathday,jdbcType=DATE},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      true_name = #{trueName,jdbcType=VARCHAR},
+      ID_card = #{idCard,jdbcType=VARCHAR},
+      card_uRL = #{cardUrl,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      register_time = #{registerTime,jdbcType=TIMESTAMP},
+      is_validate = #{isValidate,jdbcType=INTEGER},
+      like_list = #{likeList,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>

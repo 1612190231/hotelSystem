@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+  
+
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+  <commentGenerator>
+  <property name="suppressAllComments" value="true" />
+</commentGenerator>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://111.231.111.11:3306/hotel"
+        userId="root"
+        password="123456">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+	<!-- 指定javabean文件生成的位置 -->
+    <javaModelGenerator targetPackage="com.hotel.luck.bean" 
+    targetProject=".\src\main\java">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+	<!-- 指定sql映射文件生成的位置 -->
+    <sqlMapGenerator targetPackage="mapper" 
+     targetProject=".\src\main\resources">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+
+	<!-- 指定dao接口生成的位置，mapper接口 -->
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.hotel.luck.dao"
+      targetProject=".\src\main\java">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+    <!-- 指定每个表生成的名字 -->
+     <table tableName="assess" domainObjectName="assess"></table>
+     <table tableName="cityInfo" domainObjectName="cityInfo"></table>
+     <table tableName="friendInfo" domainObjectName="friendInfo"></table>
+     <table tableName="historyInfo" domainObjectName="historyInfo"></table>
+     <table tableName="hotelInfo" domainObjectName="hotelInfo"></table>
+     <table tableName="lockInfo" domainObjectName="lockInfo"></table>
+     <table tableName="lockUsing" domainObjectName="lockUsing"></table>
+     <table tableName="privilege" domainObjectName="privilege"></table>
+     <table tableName="provinceInfo" domainObjectName="provinceInfo"></table>
+     <table tableName="sensorInfo" domainObjectName="sensorInfo"></table>
+     <table tableName="sensorUsing" domainObjectName="sensorUsing"></table>
+     <table tableName="userInfo" domainObjectName="userInfo"></table>
+     <table tableName="orderInfo" domainObjectName="orderInfo"></table>
+     <table tableName="adminInfo" domainObjectName="adminInfo"></table>
+     <table tableName="R1" domainObjectName="R1"></table>
+     <table tableName="R2" domainObjectName="R2"></table>
+  </context>
+</generatorConfiguration>

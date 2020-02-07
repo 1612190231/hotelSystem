@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hotel.luck.dao.hotelInfoMapper">
+  <resultMap id="BaseResultMap" type="com.hotel.luck.bean.hotelInfo">
+    <id column="hotel_id" jdbcType="INTEGER" property="hotelId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="image_uRL" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="use_count" jdbcType="INTEGER" property="useCount" />
+    <result column="star" jdbcType="INTEGER" property="star" />
+    <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+    <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+    <result column="lock_status" jdbcType="VARCHAR" property="lockStatus" />
+    <result column="sensor_status" jdbcType="VARCHAR" property="sensorStatus" />
+    <result column="config" jdbcType="VARCHAR" property="config" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    hotel_id, name, province, city, image_uRL, address, price, use_count, star, longitude, 
+    latitude, lock_status, sensor_status, config, description
+  </sql>
+  <select id="selectByExample" parameterType="com.hotel.luck.bean.hotelInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hotelInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from hotelInfo
+    where hotel_id = #{hotelId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from hotelInfo
+    where hotel_id = #{hotelId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hotel.luck.bean.hotelInfoExample">
+    delete from hotelInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hotel.luck.bean.hotelInfo">
+    insert into hotelInfo (hotel_id, name, province, 
+      city, image_uRL, address, 
+      price, use_count, star, 
+      longitude, latitude, lock_status, 
+      sensor_status, config, description
+      )
+    values (#{hotelId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{useCount,jdbcType=INTEGER}, #{star,jdbcType=INTEGER}, 
+      #{longitude,jdbcType=DOUBLE}, #{latitude,jdbcType=DOUBLE}, #{lockStatus,jdbcType=VARCHAR}, 
+      #{sensorStatus,jdbcType=VARCHAR}, #{config,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hotel.luck.bean.hotelInfo">
+    insert into hotelInfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="hotelId != null">
+        hotel_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="imageUrl != null">
+        image_uRL,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="useCount != null">
+        use_count,
+      </if>
+      <if test="star != null">
+        star,
+      </if>
+      <if test="longitude != null">
+        longitude,
+      </if>
+      <if test="latitude != null">
+        latitude,
+      </if>
+      <if test="lockStatus != null">
+        lock_status,
+      </if>
+      <if test="sensorStatus != null">
+        sensor_status,
+      </if>
+      <if test="config != null">
+        config,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="hotelId != null">
+        #{hotelId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="useCount != null">
+        #{useCount,jdbcType=INTEGER},
+      </if>
+      <if test="star != null">
+        #{star,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null">
+        #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="lockStatus != null">
+        #{lockStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="sensorStatus != null">
+        #{sensorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="config != null">
+        #{config,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hotel.luck.bean.hotelInfoExample" resultType="java.lang.Long">
+    select count(*) from hotelInfo
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update hotelInfo
+    <set>
+      <if test="record.hotelId != null">
+        hotel_id = #{record.hotelId,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.province != null">
+        province = #{record.province,jdbcType=VARCHAR},
+      </if>
+      <if test="record.city != null">
+        city = #{record.city,jdbcType=VARCHAR},
+      </if>
+      <if test="record.imageUrl != null">
+        image_uRL = #{record.imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.useCount != null">
+        use_count = #{record.useCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.star != null">
+        star = #{record.star,jdbcType=INTEGER},
+      </if>
+      <if test="record.longitude != null">
+        longitude = #{record.longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.latitude != null">
+        latitude = #{record.latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="record.lockStatus != null">
+        lock_status = #{record.lockStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sensorStatus != null">
+        sensor_status = #{record.sensorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.config != null">
+        config = #{record.config,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update hotelInfo
+    set hotel_id = #{record.hotelId,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      province = #{record.province,jdbcType=VARCHAR},
+      city = #{record.city,jdbcType=VARCHAR},
+      image_uRL = #{record.imageUrl,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=DECIMAL},
+      use_count = #{record.useCount,jdbcType=INTEGER},
+      star = #{record.star,jdbcType=INTEGER},
+      longitude = #{record.longitude,jdbcType=DOUBLE},
+      latitude = #{record.latitude,jdbcType=DOUBLE},
+      lock_status = #{record.lockStatus,jdbcType=VARCHAR},
+      sensor_status = #{record.sensorStatus,jdbcType=VARCHAR},
+      config = #{record.config,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hotel.luck.bean.hotelInfo">
+    update hotelInfo
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        image_uRL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="useCount != null">
+        use_count = #{useCount,jdbcType=INTEGER},
+      </if>
+      <if test="star != null">
+        star = #{star,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null">
+        longitude = #{longitude,jdbcType=DOUBLE},
+      </if>
+      <if test="latitude != null">
+        latitude = #{latitude,jdbcType=DOUBLE},
+      </if>
+      <if test="lockStatus != null">
+        lock_status = #{lockStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="sensorStatus != null">
+        sensor_status = #{sensorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="config != null">
+        config = #{config,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where hotel_id = #{hotelId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hotel.luck.bean.hotelInfo">
+    update hotelInfo
+    set name = #{name,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      image_uRL = #{imageUrl,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      use_count = #{useCount,jdbcType=INTEGER},
+      star = #{star,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=DOUBLE},
+      latitude = #{latitude,jdbcType=DOUBLE},
+      lock_status = #{lockStatus,jdbcType=VARCHAR},
+      sensor_status = #{sensorStatus,jdbcType=VARCHAR},
+      config = #{config,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where hotel_id = #{hotelId,jdbcType=INTEGER}
+  </update>
+</mapper>

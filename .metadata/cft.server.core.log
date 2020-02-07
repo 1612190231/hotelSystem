@@ -1,0 +1,3 @@
+星期二 一月 15 2019 09:53:01 下午 - CloudFoundryServer.modifyModules(...): add: { hotelsystem [org.eclipse.jst.jee.server:hotelsystem/jst.web]} remove: {}
+星期二 一月 15 2019 09:53:04 下午 - CloudFoundryServerBehaviour.publishModule(...): ADDED { hotelsystem [org.eclipse.jst.jee.server:hotelsystem/jst.web]}
+星期二 一月 15 2019 09:53:04 下午 - CloudFoundryServerBehaviour.publishModule(...): ADDED { hotelsystem [org.eclipse.jst.jee.server:hotelsystem/jst.web], spring-web-5.0.6.RELEASE.jar [org.eclipse.jst.jee.server:/binary:C:\Users\lu\.m2\repository\org\springframework\spring-web\5.0.6.RELEASE\spring-web-5.0.6.RELEASE.jar/jst.webfragment]}

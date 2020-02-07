@@ -1,0 +1,74 @@
+package com.hotel.luck.controller;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.hotel.luck.bean.friendInfo;
+import com.hotel.luck.bean.userInfo;
+import com.hotel.luck.service.FriendService;
+import com.hotel.luck.service.UserInfoService;
+import com.hotel.luck.utils.Message;
+
+@Controller
+public class FriendController {
+	@Autowired
+	FriendService friendService ;
+	@Autowired
+	UserInfoService userinfoService;
+	
+	//添加入住人
+	@RequestMapping(value="/friend/add")
+	@ResponseBody
+	public Message insertFriend(
+			@RequestParam(value="userId",required=false)int userid,
+			@RequestParam(value="friendId",required=false)int friendid) {
+		
+		userInfo userinfo = userinfoService.select(friendid);
+		if (userinfo == null) {
+			return Message.createErr("该用户不存在或未通过审核");
+		}
+		friendInfo friendinfo=new friendInfo();
+		friendinfo.setUserid(userid);
+		friendinfo.setFriendid(friendid);
+		return Message.createSuc(friendService.insert(friendinfo));
+	}
+	
+	//获取入住人详细信息
+	@RequestMapping(value="/friend/detail")
+	@ResponseBody
+	public Message selectFriend(
+			@RequestParam(value="userId",required=false)int userId,
+			@RequestParam(value="FId",required=false)int FId) {
+		
+
+		return Message.createSuc(friendService.selectDetail(FId));
+	}
+	
+	/*//修改入住人信息
+	@RequestMapping(value="/friend/chg")
+	@ResponseBody
+	public Message chgFriend(
+			@RequestParam(value="telephone",required=false)String telephone,
+			@RequestParam(value="trueName",required=false)String trueName,
+			@RequestParam(value="IDCard",required=false)String IDCard,
+			@RequestParam(value="sex",required=false),
+			@RequestParam(value="userId",required=false)int id,
+			@RequestParam(value="userId",required=false)int id,
+			@RequestParam(value="userId",required=false)int id) {
+		
+
+		return Message.createSuc(friendService.select(id));
+	}*/
+	
+	//删除入住人
+	@RequestMapping(value="/friend/delete")
+	@ResponseBody
+	public Message deleteProvince(@RequestParam(value="FId",required=false)int id) {
+		return Message.createSuc(friendService.delete(id));
+	}
+
+}

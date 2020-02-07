@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- spring的配置文件，这里主要配置和业务逻辑相关的 -->
+	<context:component-scan base-package="com.hotel">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<context:property-placeholder location="classpath:dbconfig.properties" />
+	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:/mybatis-config.xml"></property>
+		<property name="dataSource" ref="pooledDataSource"></property>
+		<property name="mapperLocations" value="classpath:/mapper/*.xml"></property>
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.hotel.luck.dao"></property>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="pooledDataSource"></property>
+	</bean>
+	<aop:config>
+		<aop:pointcut expression="execution(* com.hotel.luck.service..*(..))" id="txPoint"/>
+		<aop:advisor advice-ref="txAdvice"  pointcut-ref="txPoint"/>
+	</aop:config>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*"/>
+			<tx:method name="get*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 项目运行后执行 -->
+	<!-- <bean id="startRun" class="com.hotel.luck.utils.SubscribeUtil" scope="singleton" init-method="execute"></bean> -->
+	<!-- mqtt配置 -->
+	 <bean id="clientFactory"
+		  class="org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory">
+		<property name="cleanSession" value="${mqtt.cleanSession}"/>
+		<property name="keepAliveInterval" value="${mqtt.keepAliveInterval}"/>
+		<property name="serverURIs">
+			<array>
+				<value>${mqtt.serverURI1}</value>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="mqttHandler" class="org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler">
+		<constructor-arg name="clientId" value="${mqtt.clientId}"/>
+		<constructor-arg name="clientFactory" ref="clientFactory"/>
+		<property name="async" value="${mqtt.async}"/>
+		<property name="defaultQos" value="${mqtt.defaultQos}"/>
+		<property name="completionTimeout" value="${mqtt.completionTimeout}"/>
+	</bean>
+	<!-- 自定义的任务类 -->
+	<bean id="qtzJob" class="com.hotel.luck.utils.JudgeOrderUtil"/>
+	<!-- 任务类的执行方法 -->
+	<bean id="qtzJobMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
+	    <property name="targetObject">  
+	        <ref bean="qtzJob"/>  		<!-- 要执行的任务类 -->
+	    </property>  
+	    <property name="targetMethod">  <!-- 要执行的方法名称 -->  
+	        <value>execute</value>  
+	    </property>  
+	</bean>
+	<!-- ======================== 调度触发器 ======================== -->  
+	<bean id="qtzJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+	    <property name="jobDetail" ref="qtzJobMethod"></property>  			<!-- 指定调用任务类的执行方法 -->
+	    <property name="cronExpression" value="0 0 12 * * ?"></property>   <!-- 调用的时机   这里是每天正午十二点调用一次-->
+	</bean>
+	<!-- ======================== 调度工厂 ======================== -->  
+	<bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+	    <property name="triggers">  			<!-- 触发器集合，可以放入多个触发器 -->
+	        <list>  
+	            <ref bean="qtzJobTrigger"/> 	<!-- 上面我们指定好的触发器 --> 
+	        </list>  
+	    </property>  
+	</bean> 
+</beans>
+
+
+
+
+

@@ -1,0 +1,10 @@
+127.0.0.1 - - [15/Mar/2019:18:26:11 +0800] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:26:13 +0800] "GET /hotelsystem/ HTTP/1.1" 404 975
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:27:06 +0800] "POST /hotelsystem/admin/user/chgStatus HTTP/1.1" 200 43
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:27:29 +0800] "POST /hotelsystem/admin/user/chgStatus HTTP/1.1" 200 43
+127.0.0.1 - - [15/Mar/2019:18:30:54 +0800] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:30:54 +0800] "GET /hotelsystem/ HTTP/1.1" 404 975
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:31:06 +0800] "POST /hotelsystem/admin/user/chgStatus HTTP/1.1" 200 43
+127.0.0.1 - - [15/Mar/2019:18:45:25 +0800] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:45:27 +0800] "GET /hotelsystem/ HTTP/1.1" 404 975
+0:0:0:0:0:0:0:1 - - [15/Mar/2019:18:46:07 +0800] "POST /hotelsystem/admin/user/chgStatus HTTP/1.1" 200 43

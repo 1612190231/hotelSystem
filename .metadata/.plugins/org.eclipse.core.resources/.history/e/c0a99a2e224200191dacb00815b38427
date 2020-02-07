@@ -1,0 +1,450 @@
+package com.hotel.luck.controller;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.hotel.luck.bean.ArrayPhotos;
+import com.hotel.luck.bean.adminInfo;
+import com.hotel.luck.bean.cityInfo;
+import com.hotel.luck.bean.friendInfo;
+import com.hotel.luck.bean.hotelInfo;
+import com.hotel.luck.bean.lockUsing;
+import com.hotel.luck.bean.orderInfo;
+import com.hotel.luck.bean.provinceInfo;
+import com.hotel.luck.bean.sensorUsing;
+import com.hotel.luck.bean.userInfo;
+import com.hotel.luck.service.AdminService;
+import com.hotel.luck.service.CityService;
+import com.hotel.luck.service.FriendService;
+import com.hotel.luck.service.HotelService;
+import com.hotel.luck.service.LockService;
+import com.hotel.luck.service.OrderService;
+import com.hotel.luck.service.ProvinceService;
+import com.hotel.luck.service.SensorService;
+import com.hotel.luck.service.UserInfoService;
+import com.hotel.luck.utils.Message;
+
+@Controller
+public class AdminController {
+	@Autowired
+	AdminService adminService;
+	@Autowired
+	UserInfoService userinfoService;
+	@Autowired
+	OrderService orderService;
+	@Autowired
+	HotelService hotelService;
+	@Autowired
+	CityService cityService;
+	@Autowired
+	ProvinceService provinceService;
+	@Autowired
+	LockService lockService;
+	@Autowired
+	FriendService friendService;
+	@Autowired
+	SensorService sensorService;
+	
+	//管理员登录
+	@RequestMapping(value="/admin/login",produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public  Message isTrue(
+			@RequestParam(value="account",required=false)String account,
+			@RequestParam(value="password",required=false)String password
+			) 
+	{
+			
+			
+		if(account==null||password==null) {
+			return Message.createErr("用户名或密码错误");
+		};
+		System.out.println(account);
+		System.out.println(password);
+			
+		List<adminInfo> user = adminService.getAll();
+		System.out.println(user);
+		int count = user.size();
+		for(int i=0;i<count;i++){
+			adminInfo adminInfo = user.get(i);
+			String a = adminInfo.getAccount();
+			String b = adminInfo.getPassword();
+			if(account.equals(a) && password.equals(b)){
+				return  Message.createSuc(1);
+			}
+		}
+		return Message.createErr("管理员账号或密码错误");
+	}
+
+	//根据分页获取用户列表
+	@RequestMapping(value="/admin/user")
+	@ResponseBody
+	public Message getUser(
+			@RequestParam(value="curr",required=false)int curr
+		) {
+			
+		List<userInfo> userinfo=new ArrayList<userInfo>();
+		List<userInfo> user = new ArrayList<userInfo>();
+		int len = userinfo.size();
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("curr", curr);
+		data.put("all", len);
+		userinfo = userinfoService.getAll();
+		//每页十条记录
+		for (int i=(curr-1)*10;i<curr*10;i++) {
+			if (i==len) break;
+			user.add(userinfo.get(i));
+		}
+		data.put("info", user);
+		return Message.createSuc(data);
+	}
+	
+	//修改用户当前状态
+	@RequestMapping(value="/admin/user/chgStatus")
+	@ResponseBody
+	public Message updateValidate(
+			@RequestParam(value="userId",required=false)int id,
+			@RequestParam(value="isValidate",required=false)int is
+		) {
+			
+		userInfo userinfo=new userInfo();
+		userinfo.setUserid(id);
+		userinfo.setIsvalidate(is);
+		return Message.createSuc(userinfoService.update(userinfo));
+	}
+	
+	//根据分页获取订单列表
+	@RequestMapping(value="/admin/order")
+	@ResponseBody
+	public Message getOrder(
+			@RequestParam(value="curr",required=false)int curr
+		) {
+				
+		List<orderInfo> orderinfo=new ArrayList<orderInfo>();
+		List<orderInfo> order = new ArrayList<orderInfo>();
+		List<userInfo> user = new ArrayList<userInfo>();
+		List<friendInfo> friend = new ArrayList<friendInfo>();
+		int len = orderinfo.size();
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("curr", curr);
+		data.put("all", len);
+		orderinfo = orderService.selectAllOrder();
+		//每页十条记录
+		for (int i=(curr-1)*10;i<curr*10;i++) {
+			if (i==len) break;
+			order.add(orderinfo.get(i));
+			int userid = orderinfo.get(i).getUserid();
+			friend = friendService.select(userid);
+			for (int j=0;j<friend.size();j++) {
+				user.add(userinfoService.select(friend.get(j).getFriendid()));
+			}
+		}
+		data.put("orderinfo", order);
+		data.put("userinfo", user);
+		return Message.createSuc(data);
+	}
+	
+	//获取订单详情
+	@RequestMapping(value="/admin/order/detail")
+	@ResponseBody
+	public Message selectOrder(@RequestParam(value="orderId",required=false)int id) {
+		orderInfo orderinfo = new orderInfo();
+		orderinfo = orderService.selectOrder(id);
+		
+		//获取房间信息
+		int hotelid = orderinfo.getHotelid();
+		hotelInfo hotelinfo = new hotelInfo();
+		hotelinfo = hotelService.selectHotel(hotelid);
+		
+		//获取用户信息
+		int userid = orderinfo.getUserid();
+		userInfo userinfo = new userInfo();
+		userinfo = userinfoService.select(userid);
+		
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("hotelinfo", hotelinfo);
+		data.put("userinfo", userinfo);
+		data.put("orderinfo", orderinfo);
+		return Message.createSuc(data);
+	}
+	
+	//根据分页获取房间列表
+	@RequestMapping(value="/admin/room")
+	@ResponseBody
+	public Message getHotel(
+			@RequestParam(value="curr",required=false)int curr
+		) {
+				
+		List<hotelInfo> hotelinfo=new ArrayList<hotelInfo>();
+		List<hotelInfo> hotel = new ArrayList<hotelInfo>();
+		int len = hotelinfo.size();
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("curr", curr);
+		data.put("all", len);
+		hotelinfo = hotelService.getAll();
+		//每页十条记录
+		for (int i=(curr-1)*10;i<curr*10;i++) {
+			if (i==len) break;
+			hotel.add(hotelinfo.get(i));
+		}
+		data.put("orderinfo", hotel);
+		return Message.createSuc(data);
+	}
+	
+	//查询房间状况
+	@RequestMapping(value="/admin/room/status")
+	@ResponseBody
+	public Message selecHotel(@RequestParam(value="hotelId",required=false)int id) {
+		List<sensorUsing> sensorusing = new ArrayList<sensorUsing> ();
+		sensorusing = sensorService.selectUsing(id);
+		
+		return Message.createSuc(sensorusing.get(sensorusing.size()-1));
+	}
+	
+	//新增房间
+	@RequestMapping(value="/admin/room/add")
+	@ResponseBody
+	public Message addHotel(
+			@RequestParam(value="name",required=false)String name,
+			@RequestParam(value="province",required=false)String province,
+			@RequestParam(value="city",required=false)String city,
+			@RequestParam(value="address",required=false)String address,
+			@RequestParam(value="price",required=false)BigDecimal price,
+			@RequestParam(value="longitude",required=false)Double longitude,
+			@RequestParam(value="latitude",required=false)Double latitude,
+			@RequestParam(value="photos",required=false)ArrayPhotos imageurl,
+			@RequestParam(value="lockStatus",required=false)int lockStatus,
+			@RequestParam(value="sensorStatus",required=false)int sensorStatus
+			                 ) {
+		
+		hotelInfo hotelinfo=new hotelInfo();
+		hotelinfo.setName(name);
+		hotelinfo.setProvince(province);
+		hotelinfo.setCity(city);
+		hotelinfo.setAddress(address);
+		hotelinfo.setPrice(price);
+		hotelinfo.setUsecount(0);
+		hotelinfo.setStar(0);
+		hotelinfo.setLockstatus(lockStatus);
+		hotelinfo.setSensorstatus(sensorStatus);
+		hotelinfo.setLongitude(longitude);
+		hotelinfo.setLatitude(latitude);
+		
+		String photos = "";
+		String[] rooms = imageurl.getRoom();
+		String[] urls = imageurl.getUrl();
+		int end = rooms.length;
+		for (int i=0;i<end;i++) {
+			photos = photos + rooms[i] + ":" + urls[i] + ";";
+		}
+		hotelinfo.setImageurl(photos);
+			
+			
+		return Message.createSuc(hotelService.insert(hotelinfo));
+	}
+
+	//删除房间
+	@RequestMapping(value="/admin/room/delete")
+	@ResponseBody
+	public Message deleteProvince(@RequestParam(value="hotelId",required=false)int id) {
+		//usingService.delete(id);
+		return Message.createSuc(hotelService.delete(id));
+	}
+
+	//根据分页获取刷卡记录
+	@RequestMapping(value="/admin/pass")
+	@ResponseBody
+	public Message getLock(
+			@RequestParam(value="curr",required=false)int curr
+		) {
+			
+		List<lockUsing> lockusing=new ArrayList<lockUsing>();
+		List<lockUsing> using = new ArrayList<lockUsing>();
+		int len = lockusing.size();
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("curr", curr);
+		data.put("all", len);
+		lockusing = lockService.getAllUsing();
+		//每页十条记录
+		for (int i=(curr-1)*10;i<curr*10;i++) {
+			if (i==len) break;
+			using.add(lockusing.get(i));
+		}
+		data.put("info", using);
+		return Message.createSuc(data);
+	}
+	
+	//根据关键字搜索刷卡记录
+	@RequestMapping(value="/admin/pass/search")
+	@ResponseBody
+	public Message selectHotelUsing(@RequestParam(value="key",required=false)String key) {
+		
+		List<userInfo> userinfo = new ArrayList<userInfo> ();
+		List<hotelInfo> hotelinfo = new ArrayList<hotelInfo> ();
+		userinfo = userinfoService.getAll();
+		hotelinfo = hotelService.getAll();
+		
+		for(int i=0;i<userinfo.size();i++){
+			userInfo user = userinfo.get(i);
+			String a = user.getTruename();
+			if(a.equals(key)){
+				int id = user.getUserid();
+				return Message.createSuc(lockService.selectHotelUsing(id));
+			}
+		}
+		
+		for(int i=0;i<hotelinfo.size();i++){
+			hotelInfo hotel = hotelinfo.get(i);
+			String a = hotel.getName();
+			if(a.equals(key)){
+				int id = hotel.getHotelid();
+				return Message.createSuc(lockService.selectUserUsing(id));
+			}
+		}
+		
+		return Message.createErr("搜索结果不存在");
+	}
+	
+	//根据关键字搜索用户
+	@RequestMapping(value="/admin/user/search")
+	@ResponseBody
+	public Message selectKeyUser(@RequestParam(value="key",required=false)String key) {
+			
+		List<userInfo> userinfo = new ArrayList<userInfo> ();
+		userinfo = userinfoService.getAll();
+			
+		for(int i=0;i<userinfo.size();i++){
+			userInfo user = userinfo.get(i);
+			//根据性别搜索
+			String a = user.getSex();
+			if(a.equals(key)){
+				return Message.createSuc(userinfoService.selectBySex(a));
+			}
+			//根据用户名搜索
+			a = user.getUsername();
+			if(a.equals(key)){
+				return Message.createSuc(userinfoService.selectByName(a));
+			}
+			//根据年龄搜索
+			int age = user.getAge();
+			int Key = Integer.parseInt(key);
+			if (age==Key) {
+				return Message.createSuc(userinfoService.selectByAge(age));
+			}
+		}
+			
+		return Message.createErr("搜索结果不存在");
+	}
+
+	//根据关键字搜索房间
+	@RequestMapping(value="/admin/hotel/search")
+	@ResponseBody
+	public Message selectKeyHotel(@RequestParam(value="key",required=false)String key) {
+				
+		List<hotelInfo> hotelinfo = new ArrayList<hotelInfo> ();
+		hotelinfo = hotelService.getAll();
+				
+		for(int i=0;i<hotelinfo.size();i++){
+			hotelInfo hotel = hotelinfo.get(i);
+			//根据名称搜索
+			String a = hotel.getName();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByName(a));}
+			//根据省份搜索
+			a = hotel.getProvince();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByProvince(a));}
+			//根据城市搜索
+			a = hotel.getCity();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByCity(a));}
+			//根据地址搜索
+			a = hotel.getAddress();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByAddress(a));}
+			//根据价格搜索
+			BigDecimal age = hotel.getPrice();
+			BigDecimal Price = new BigDecimal(key);
+			if (age==Price) {return Message.createSuc(hotelService.selectByPrice(age));}
+			//根据评分搜索
+			int star = hotel.getStar();
+			int Key = Integer.parseInt(key);
+			if (star==Key) {return Message.createSuc(hotelService.selectByStar(Key));}
+		}
+				
+		return Message.createErr("搜索结果不存在");
+	}
+
+	//根据关键字搜索订单
+	@RequestMapping(value="/admin/order/search")
+	@ResponseBody
+	public Message selectKeyOrder(@RequestParam(value="key",required=false)String key) {
+					
+		List<hotelInfo> hotelinfo = new ArrayList<hotelInfo> ();
+		hotelinfo = hotelService.getAll();
+					
+		for(int i=0;i<hotelinfo.size();i++){
+			hotelInfo hotel = hotelinfo.get(i);
+			//根据名称搜索
+			String a = hotel.getName();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByName(a));}
+			//根据省份搜索
+			a = hotel.getProvince();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByProvince(a));}
+			//根据城市搜索
+			a = hotel.getCity();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByCity(a));}
+			//根据地址搜索
+			a = hotel.getAddress();
+			if(a.equals(key)){return Message.createSuc(hotelService.selectByAddress(a));}
+			//根据价格搜索
+			BigDecimal age = hotel.getPrice();
+			BigDecimal Price = new BigDecimal(key);
+			if (age==Price) {return Message.createSuc(hotelService.selectByPrice(age));}
+			//根据评分搜索
+			int star = hotel.getStar();
+			int Key = Integer.parseInt(key);
+			if (star==Key) {return Message.createSuc(hotelService.selectByStar(Key));}
+		}
+					
+		return Message.createErr("搜索结果不存在");
+	}
+
+	//修改房屋信息
+	@RequestMapping(value="/admin/room/chg")
+	@ResponseBody
+	public Message updateHotel(
+			@RequestParam(value="hotelId",required=false)int hotelid,
+			@RequestParam(value="province",required=false)String province,
+			@RequestParam(value="city",required=false)String city,
+			@RequestParam(value="username",required=false)String name,
+			@RequestParam(value="address",required=false)String address,
+			@RequestParam(value="price",required=false)BigDecimal price,
+			@RequestParam(value="longitude",required=false)Double longitude,
+			@RequestParam(value="latitude",required=false)Double latitude,
+			@RequestParam(value="photos",required=false)String photourl,
+			@RequestParam(value="lockStatus",required=false)int lockStatus,
+			@RequestParam(value="sensorStatus",required=false)int sensorStatus
+         ) {
+
+			hotelInfo hotelinfo=new hotelInfo();
+			hotelinfo = hotelService.selectHotel(hotelid);
+			hotelinfo.setProvince(province);
+			hotelinfo.setCity(city);
+			hotelinfo.setName(name);
+			hotelinfo.setAddress(address);
+			hotelinfo.setPrice(price);
+			hotelinfo.setLongitude(longitude);
+			hotelinfo.setLatitude(latitude);
+			hotelinfo.setImageurl(photourl);
+			hotelinfo.setLockstatus(lockStatus);
+			hotelinfo.setSensorstatus(sensorStatus);
+			
+			
+			return Message.createSuc(hotelService.update(hotelinfo));
+	}
+}
